@@ -42,15 +42,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-//    private fun setupMemo() {
-//        val dm = DisplayMetrics()
-//        windowManager.defaultDisplay.getMetrics(dm)
-//        val height = dm.heightPixels
-//        val ml = binding.memo.layoutParams
-//        ml.height = height / 10
-//        binding.memo.layoutParams = ml
-//    }
-
     private fun setupButton() {
         setupAddButton()
         setupChangeButton()
@@ -88,10 +79,11 @@ class MainActivity : AppCompatActivity() {
 
         calendarAdapter.setOnDataCellClickListener(object : RecyclerviewAdapter.OnDataCellClickListener {
             override fun onItemClick(data: AlarmData) {
+                Log.d("data", data.toString())
                 if (data.title == "") {
                     binding.timeView.setText("予定なし")
                     binding.titleView.setText("")
-                    binding.dateView.setText("")
+                    binding.dateView.text = data.year.toString() + "/" + data.month.toString() + "/" + data.day.toString()
                 } else {
                     binding.timeView.text = data.hour.toString() + ":" + data.minute.toString() + "アラーム"
                     binding.titleView.text = data.title

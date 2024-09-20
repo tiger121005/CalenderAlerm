@@ -44,7 +44,7 @@
                     android:autoSizeTextType="uniform"
                     android:autoSizeMinTextSize="20sp"
                     android:autoSizeMaxTextSize="30sp"
-                    android:text=""
+                    android:text="選択されていません"
                     android:gravity="center_vertical" />
 
                 <Button
