@@ -39,6 +39,15 @@ class MainActivity : AppCompatActivity() {
         binding.previousButton.setOnClickListener {
             clickChangeMonthButton("previous")
         }
+        binding.addButton.setOnClickListener {
+            val myBottomSheet = BottomSheet()
+            myBottomSheet.show(supportFragmentManager,"navigation_bottom_sheet")
+        }
+
+        binding.changeButton.setOnClickListener {
+            val myBottomSheet = BottomSheet()
+            myBottomSheet.show(supportFragmentManager,"navigation_bottom_sheet")
+        }
 
     }
 
