@@ -3,11 +3,13 @@ package app.ito.yomi.calenderalerm
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
+import androidx.room.Upsert
 
 @Dao
 interface AlarmDataDao {
-    @Insert
-    fun insert(alerm: AlarmData)
+    @Upsert()
+    fun upsert(alarm: AlarmData)
 
     @Query("select * from alarm_data")
     fun getAll(): List<AlarmData>

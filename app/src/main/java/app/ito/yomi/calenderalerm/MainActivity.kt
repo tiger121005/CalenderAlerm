@@ -20,7 +20,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var yearText:TextView
     private lateinit var selectedDate: LocalDate
     private lateinit var db: AppDatabase
+    private var currentSelect: AlarmData? = null
 
+    private var alarmData: MutableList<AlarmData> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,12 +43,37 @@ class MainActivity : AppCompatActivity() {
         }
         binding.addButton.setOnClickListener {
             val myBottomSheet = BottomSheet()
+            val args = Bundle()
+            args.putBoolean("change", false)
+            args.putInt("id", -1)
+            args.putString("title", "")
+            args.putInt("year", selectedDate.year)
+            args.putInt("month", selectedDate.monthValue)
+            args.putInt("day", 0)
+            args.putInt("week", 8)
+            args.putInt("hour", 100)
+            args.putInt("minute", 100)
+            myBottomSheet.setArguments(args)
             myBottomSheet.show(supportFragmentManager,"navigation_bottom_sheet")
         }
-
         binding.changeButton.setOnClickListener {
-            val myBottomSheet = BottomSheet()
-            myBottomSheet.show(supportFragmentManager,"navigation_bottom_sheet")
+            currentSelect?.let { data ->
+                val myBottomSheet = BottomSheet()
+                val args = Bundle()
+                args.putBoolean("change", true)
+                args.putInt("id", data.id)
+                args.putString("title", data.title)
+                args.putInt("year", data.year)
+                args.putInt("month", data.month)
+                args.putInt("day", data.day)
+                args.putInt("week", data.week)
+                args.putInt("hour", data.hour)
+                args.putInt("minute", data.minute)
+                myBottomSheet.setArguments(args)
+                myBottomSheet.show(supportFragmentManager,"navigation_bottom_sheet")
+
+            }
+
         }
 
     }
@@ -88,6 +115,7 @@ class MainActivity : AppCompatActivity() {
 
         calendarAdapter.setOnDataCellClickListener(object : RecyclerviewAdapter.OnDataCellClickListener {
             override fun onItemClick(data: AlarmData) {
+                currentSelect = data
                 Log.d("data", data.toString())
                 if (data.title == "") {
                     binding.timeView.setText("予定なし")
@@ -169,23 +197,21 @@ class MainActivity : AppCompatActivity() {
                 minute = data[0].minute
             }
 
-
-
-
-                val alarmData = AlarmData(
-                    title = title,
-                    year = selectedDate.year,
-                    month = selectedDate.monthValue,
-                    day = dates[i].toInt(),
-                    week = selectedDate.dayOfWeek.value,
-                    hour = hour,
-                    minute = minute
-                )
-                dataList.add(alarmData)
+            val alarmData = AlarmData(
+                title = title,
+                year = selectedDate.year,
+                month = selectedDate.monthValue,
+                day = dates[i].toInt(),
+                week = selectedDate.dayOfWeek.value,
+                hour = hour,
+                minute = minute
+            )
+            dataList.add(alarmData)
 
         }
         Log.d("dataList", dataList.toString())
         Log.d("dataListSize", dataList.size.toString())
+        alarmData = dataList
         return dataList
     }
 
