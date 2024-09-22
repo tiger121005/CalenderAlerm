@@ -3,7 +3,9 @@ package app.ito.yomi.calenderalerm
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.ito.yomi.calenderalerm.databinding.ActivityMainBinding
@@ -12,14 +14,13 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.YearMonth
 import org.threeten.bp.format.DateTimeFormatter
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NoticeBottomSheetListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var calendarRecyclerView:RecyclerView
     private lateinit var monthText:TextView
     private lateinit var yearText:TextView
     private lateinit var selectedDate: LocalDate
-    private lateinit var db: AppDatabase
     private var currentSelect: AlarmData? = null
 
     private var alarmData: MutableList<AlarmData> = mutableListOf()
@@ -27,13 +28,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater).apply { setContentView(root) }
-        db = AppDatabase.getInstance(this.applicationContext)
+        val viewModel: MainViewModel by viewModels()
         AndroidThreeTen.init(this)
+
+        viewModel.alarmAllData.observe(this, Observer {
+            setMonthView()
+        })
 
         setupButton()
         initWidgets()
         selectedDate = LocalDate.now()
-        setMonthView()
+//        setMonthView()
 
         binding.nextButton.setOnClickListener {
             clickChangeMonthButton("next")
@@ -60,12 +65,13 @@ class MainActivity : AppCompatActivity() {
             currentSelect?.let { data ->
                 val myBottomSheet = BottomSheet()
                 val args = Bundle()
+                Log.d("changeID", data.id.toString())
                 args.putBoolean("change", true)
                 args.putInt("id", data.id)
                 args.putString("title", data.title)
                 args.putInt("year", data.year)
                 args.putInt("month", data.month)
-                args.putInt("day", data.day)
+                args.putInt("day", data.date)
                 args.putInt("week", data.week)
                 args.putInt("hour", data.hour)
                 args.putInt("minute", data.minute)
@@ -76,6 +82,24 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+    }
+
+    override fun onDeleteButtonClick() {
+        val viewModel: MainViewModel by viewModels()
+        currentSelect?.let { data ->
+            viewModel.delete(data.id)
+        }
+    }
+
+    override fun onChangeButtonClick() {
+        val viewModel: MainViewModel by viewModels()
+        currentSelect?.let { data ->
+            if (data.id == -1) {
+                viewModel.insert(data)
+            } else {
+                viewModel.update(data)
+            }
+        }
     }
 
     private fun setupButton() {
@@ -120,11 +144,11 @@ class MainActivity : AppCompatActivity() {
                 if (data.title == "") {
                     binding.timeView.setText("予定なし")
                     binding.titleView.setText("")
-                    binding.dateView.text = data.year.toString() + "/" + data.month.toString() + "/" + data.day.toString()
+                    binding.dateView.text = data.year.toString() + "/" + data.month.toString() + "/" + data.date.toString()
                 } else {
                     binding.timeView.text = data.hour.toString() + ":" + data.minute.toString() + "アラーム"
                     binding.titleView.text = data.title
-                    binding.dateView.text = data.year.toString() + "/" + data.month.toString() + "/" + data.day.toString()
+                    binding.dateView.text = data.year.toString() + "/" + data.month.toString() + "/" + data.date.toString()
                 }
 
             }
@@ -187,21 +211,24 @@ class MainActivity : AppCompatActivity() {
         Log.d("size before", dates.size.toString())
         for (i in 0..dates.size - 1) {
 
+            var id: Int = -1
             var title: String = ""
             var hour: Int = 100
             var minute: Int = 100
-            val data = db.alarmDataDao().getAlarmByDate(selectedDate.year, selectedDate.monthValue, dates[i].toInt())
+            val data = filteredAlarmData(selectedDate.year, selectedDate.monthValue, dates[i].toInt())
             if (data.size != 0) {
+                id = data[0].id
                 title = data[0].title
                 hour = data[0].hour
                 minute = data[0].minute
             }
 
             val alarmData = AlarmData(
+                id = id,
                 title = title,
                 year = selectedDate.year,
                 month = selectedDate.monthValue,
-                day = dates[i].toInt(),
+                date = dates[i].toInt(),
                 week = selectedDate.dayOfWeek.value,
                 hour = hour,
                 minute = minute
@@ -213,6 +240,11 @@ class MainActivity : AppCompatActivity() {
         Log.d("dataListSize", dataList.size.toString())
         alarmData = dataList
         return dataList
+    }
+
+    private fun filteredAlarmData(year: Int, month: Int, date: Int): List<AlarmData> {
+        val data = alarmData.filter { it.year == year && it.month == month && it.date == date }
+        return data
     }
 
 }

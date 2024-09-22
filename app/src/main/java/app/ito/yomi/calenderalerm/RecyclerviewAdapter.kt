@@ -23,12 +23,12 @@ class RecyclerviewAdapter(dataList: List<AlarmData>): RecyclerView.Adapter<ViewH
     }
 
     override fun onBindViewHolder(holder: ViewHolderItem, position: Int) {
-        holder.oneDayText.text = dataList[position].day.toString()
+        holder.oneDayText.text = dataList[position].date.toString()
         holder.itemView.setOnClickListener {
             listener.onItemClick(dataList[position])
         }
 
-        if (dataList[position].day == 0) {
+        if (dataList[position].date == 0) {
             holder.oneDayText.text = ""
             holder.timeText.text = ""
         }else if (dataList[position].hour == 100) {

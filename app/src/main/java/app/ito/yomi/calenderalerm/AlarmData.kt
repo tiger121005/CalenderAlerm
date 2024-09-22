@@ -18,8 +18,8 @@ data class AlarmData(
     @ColumnInfo(name = "month")
     var month: Int,
 
-    @ColumnInfo(name = "day")
-    var day: Int,
+    @ColumnInfo(name = "date")
+    var date: Int,
 
     @ColumnInfo(name = "week")
     var week: Int,

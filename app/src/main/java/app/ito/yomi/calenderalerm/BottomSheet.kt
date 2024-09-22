@@ -3,9 +3,9 @@ package app.ito.yomi.calenderalerm
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.icu.util.Calendar
 import android.os.Bundle
-import android.text.Editable
 import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,7 +16,6 @@ import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.TimePicker
 import androidx.fragment.app.DialogFragment
-import app.ito.yomi.calenderalerm.databinding.FragmentBottomSheetBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
@@ -24,7 +23,9 @@ import org.threeten.bp.format.DateTimeFormatter
 
 class BottomSheet(): BottomSheetDialogFragment() {
 
-    private lateinit var db: AppDatabase
+//    private lateinit var db: AlarmDatabase
+    private lateinit var listener: NoticeBottomSheetListener
+
     private var change: Boolean = false
     private var id: Int = -1
     private lateinit var title: String
@@ -48,7 +49,7 @@ class BottomSheet(): BottomSheetDialogFragment() {
         viewInit()
 
         val applicationContext = requireContext()
-        db = AppDatabase.getInstance(applicationContext)
+//        db = AlarmDatabase.getDatabase(applicationContext)
 
         getData()
         setData()
@@ -57,7 +58,10 @@ class BottomSheet(): BottomSheetDialogFragment() {
         setupTimePicker()
 
         deleteButton.setOnClickListener {
-            db.alarmDataDao().deleteAlarmById(id)
+            Log.d("deleteID", id.toString())
+            listener.onDeleteButtonClick()
+//            db.alarmDataDao().deleteAlarmById(id)
+
             dismiss()
         }
 
@@ -70,9 +74,10 @@ class BottomSheet(): BottomSheetDialogFragment() {
             val day = date.split("/")[2].toInt()
             val hour = time.split(":")[0].toInt()
             val minute = time.split(":")[1].toInt()
+            listener.onChangeButtonClick()
 
-            db.alarmDataDao().upsert(AlarmData(id, title, year, month, day, week, hour, minute))
-
+//            db.alarmDataDao().upsert(AlarmData(id, title, year, month, day, week, hour, minute))
+            dismiss()
         }
 
         return view
@@ -83,6 +88,11 @@ class BottomSheet(): BottomSheetDialogFragment() {
 
         setupDatePicker()
         setupTimePicker()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        listener = context as NoticeBottomSheetListener
     }
 
     fun viewInit() {
@@ -168,7 +178,7 @@ class DatePickerFragment(private val editText: EditText): DialogFragment(), Date
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        val setLocalDate = LocalDate.of(year, month, dayOfMonth)
+        val setLocalDate = LocalDate.of(year, month+1, dayOfMonth)
         val format = DateTimeFormatter.ofPattern("yyyy/MM/dd")
         val date = setLocalDate.format(format)
         editText.setText(date)
