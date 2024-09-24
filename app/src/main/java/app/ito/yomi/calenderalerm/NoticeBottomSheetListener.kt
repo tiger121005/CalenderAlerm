@@ -1,6 +1,6 @@
 package app.ito.yomi.calenderalerm
 
 interface NoticeBottomSheetListener {
-    fun onDeleteButtonClick()
-    fun onChangeButtonClick()
+    fun onDeleteButtonClick(id: Int)
+    fun onChangeButtonClick(data: AlarmData)
 }

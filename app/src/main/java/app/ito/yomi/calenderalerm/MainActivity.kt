@@ -2,6 +2,7 @@ package app.ito.yomi.calenderalerm
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -31,7 +32,8 @@ class MainActivity : AppCompatActivity(), NoticeBottomSheetListener {
         val viewModel: MainViewModel by viewModels()
         AndroidThreeTen.init(this)
 
-        viewModel.alarmAllData.observe(this, Observer {
+        viewModel.alarmAllData.observe(this, Observer { value ->
+            alarmData = value.toMutableList()
             setMonthView()
         })
 
@@ -84,21 +86,38 @@ class MainActivity : AppCompatActivity(), NoticeBottomSheetListener {
 
     }
 
-    override fun onDeleteButtonClick() {
+    override fun onDeleteButtonClick(id: Int) {
         val viewModel: MainViewModel by viewModels()
-        currentSelect?.let { data ->
-            viewModel.delete(data.id)
-        }
+        viewModel.delete(id)
     }
 
-    override fun onChangeButtonClick() {
+    override fun onChangeButtonClick(data: AlarmData) {
         val viewModel: MainViewModel by viewModels()
-        currentSelect?.let { data ->
-            if (data.id == -1) {
+        Log.d("tap change", "tapped")
+        Log.d("currentSelect", currentSelect.toString())
+
+        var data = AlarmData(
+            title = data.title,
+            year = data.year,
+            month = data.month,
+            date = data.date,
+            week = data.week,
+            hour = data.hour,
+            minute = data.minute
+        )
+
+
+        currentSelect?.also { select ->
+            if (select.id == -1) {
+                Log.d("before insert data", data.toString())
                 viewModel.insert(data)
             } else {
-                viewModel.update(data)
+                Log.d("before update data", data.toString())
+                viewModel.update(data, select.id)
             }
+        } ?: run {
+            Log.d("before insert data current null", data.toString())
+            viewModel.insert(data)
         }
     }
 
@@ -238,12 +257,14 @@ class MainActivity : AppCompatActivity(), NoticeBottomSheetListener {
         }
         Log.d("dataList", dataList.toString())
         Log.d("dataListSize", dataList.size.toString())
-        alarmData = dataList
+//        alarmData = dataList
         return dataList
     }
 
     private fun filteredAlarmData(year: Int, month: Int, date: Int): List<AlarmData> {
+        Log.d("alarmData", alarmData.toString())
         val data = alarmData.filter { it.year == year && it.month == month && it.date == date }
+
         return data
     }
 

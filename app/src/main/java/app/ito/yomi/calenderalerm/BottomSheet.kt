@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.text.InputType
@@ -48,9 +49,6 @@ class BottomSheet(): BottomSheetDialogFragment() {
         view = inflater.inflate(R.layout.fragment_bottom_sheet,container,false)
         viewInit()
 
-        val applicationContext = requireContext()
-//        db = AlarmDatabase.getDatabase(applicationContext)
-
         getData()
         setData()
 
@@ -59,8 +57,7 @@ class BottomSheet(): BottomSheetDialogFragment() {
 
         deleteButton.setOnClickListener {
             Log.d("deleteID", id.toString())
-            listener.onDeleteButtonClick()
-//            db.alarmDataDao().deleteAlarmById(id)
+            listener.onDeleteButtonClick(id)
 
             dismiss()
         }
@@ -74,7 +71,8 @@ class BottomSheet(): BottomSheetDialogFragment() {
             val day = date.split("/")[2].toInt()
             val hour = time.split(":")[0].toInt()
             val minute = time.split(":")[1].toInt()
-            listener.onChangeButtonClick()
+
+            listener.onChangeButtonClick(AlarmData(id, title, year, month, day, week, hour, minute))
 
 //            db.alarmDataDao().upsert(AlarmData(id, title, year, month, day, week, hour, minute))
             dismiss()
