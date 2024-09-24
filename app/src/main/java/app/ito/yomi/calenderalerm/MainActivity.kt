@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity(), NoticeBottomSheetListener {
     private lateinit var selectedDate: LocalDate
     private var currentSelect: AlarmData? = null
 
+    private val actions = Actions()
+
     private var alarmData: MutableList<AlarmData> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -160,12 +162,12 @@ class MainActivity : AppCompatActivity(), NoticeBottomSheetListener {
             override fun onItemClick(data: AlarmData) {
                 currentSelect = data
                 Log.d("data", data.toString())
-                if (data.title == "") {
+                if (data.id == -1) {
                     binding.timeView.setText("予定なし")
                     binding.titleView.setText("")
                     binding.dateView.text = data.year.toString() + "/" + data.month.toString() + "/" + data.date.toString()
                 } else {
-                    binding.timeView.text = data.hour.toString() + ":" + data.minute.toString() + "アラーム"
+                    binding.timeView.text = actions.formatTime(data.hour, data.minute) + "アラーム"
                     binding.titleView.text = data.title
                     binding.dateView.text = data.year.toString() + "/" + data.month.toString() + "/" + data.date.toString()
                 }

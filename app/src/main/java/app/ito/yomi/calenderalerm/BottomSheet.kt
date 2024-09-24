@@ -44,6 +44,8 @@ class BottomSheet(): BottomSheetDialogFragment() {
     private lateinit var deleteButton: Button
     private lateinit var changeButton: Button
 
+    private val actions = Actions()
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         view = inflater.inflate(R.layout.fragment_bottom_sheet,container,false)
@@ -144,7 +146,7 @@ class BottomSheet(): BottomSheetDialogFragment() {
         }
         dateEditText.setText(date)
         dateEditText.setOnClickListener {
-            val datePicker = DatePickerFragment(dateEditText)
+            val datePicker = DatePickerFragment(dateEditText, year, month, day)
             val fragmentManager = requireActivity().supportFragmentManager
             datePicker.show(fragmentManager, "datePickerDialog")
         }
@@ -154,23 +156,29 @@ class BottomSheet(): BottomSheetDialogFragment() {
         timeEditText.setRawInputType(InputType.TYPE_NULL)
         var time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"))
         if (hour != 100) {
-            time = "$hour:$minute"
+            time = actions.formatTime(hour, minute)
         }
         timeEditText.setText(time)
         timeEditText.setOnClickListener {
-            val timePicker = TimePickerFragment(timeEditText)
+            val timePicker = TimePickerFragment(timeEditText, hour, minute)
             val fragmentManager = requireActivity().supportFragmentManager
             timePicker.show(fragmentManager, "timePickerDialog")
         }
     }
 }
 
-class DatePickerFragment(private val editText: EditText): DialogFragment(), DatePickerDialog.OnDateSetListener {
+class DatePickerFragment(private val editText: EditText, private val year: Int, private val month: Int, private val date: Int): DialogFragment(), DatePickerDialog.OnDateSetListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val calendar: Calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        var calendar: Calendar = Calendar.getInstance()
+        var year = calendar.get(Calendar.YEAR)
+        var month = calendar.get(Calendar.MONTH)
+        var day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        if (year != 0) {
+            year = this.year
+            month = this.month
+            day = this.date
+        }
 
         return DatePickerDialog(requireContext(), this, year, month, day)
     }
@@ -183,11 +191,16 @@ class DatePickerFragment(private val editText: EditText): DialogFragment(), Date
     }
 }
 
-class TimePickerFragment(private val editText: EditText): DialogFragment(), TimePickerDialog.OnTimeSetListener {
+class TimePickerFragment(private val editText: EditText, private val hour: Int, private val minute: Int): DialogFragment(), TimePickerDialog.OnTimeSetListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val calendar: Calendar = Calendar.getInstance()
-        val hour = calendar.get(Calendar.HOUR_OF_DAY)
-        val minute = calendar.get(Calendar.MINUTE)
+        var hour = calendar.get(Calendar.HOUR_OF_DAY)
+        var minute = calendar.get(Calendar.MINUTE)
+
+        if (hour != 100) {
+            hour = this.hour
+            minute = this.minute
+        }
 
         return TimePickerDialog(requireContext(), this, hour, minute, true)
     }
