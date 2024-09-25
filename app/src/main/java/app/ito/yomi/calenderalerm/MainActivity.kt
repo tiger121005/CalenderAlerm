@@ -82,7 +82,6 @@ class MainActivity : AppCompatActivity(), NoticeBottomSheetListener {
                 args.putInt("minute", data.minute)
                 myBottomSheet.setArguments(args)
                 myBottomSheet.show(supportFragmentManager,"navigation_bottom_sheet")
-
             }
         }
     }

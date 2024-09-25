@@ -7,11 +7,12 @@
 
     <TextView
         android:id="@+id/day_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:text="1"
         android:layout_marginTop="10dp"
         android:textSize="18sp"
+        android:gravity="center"
         android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toTopOf="@+id/time_text"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,6 +28,7 @@
         android:text="08:00"
         android:textSize="12sp"
         android:textStyle="bold"
+        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -1,8 +1,10 @@
 package app.ito.yomi.calenderalerm
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.ito.yomi.calenderalerm.Actions
 
@@ -10,6 +12,7 @@ class RecyclerviewAdapter(dataList: List<AlarmData>): RecyclerView.Adapter<ViewH
     private lateinit var listener: OnDataCellClickListener
     private var dataList = dataList
     private val calenderManager = CalenderManager()
+    private var selectedPosition = RecyclerView.NO_POSITION
 
     interface OnDataCellClickListener {
         fun onItemClick(data: AlarmData)
@@ -28,6 +31,9 @@ class RecyclerviewAdapter(dataList: List<AlarmData>): RecyclerView.Adapter<ViewH
         holder.oneDayText.text = dataList[position].date.toString()
         holder.itemView.setOnClickListener {
             listener.onItemClick(dataList[position])
+            notifyItemChanged(selectedPosition)
+            selectedPosition = holder.bindingAdapterPosition
+            notifyItemChanged(selectedPosition)
         }
 
         if (dataList[position].date == 0) {
@@ -37,8 +43,16 @@ class RecyclerviewAdapter(dataList: List<AlarmData>): RecyclerView.Adapter<ViewH
             holder.timeText.text = ""
         } else {
             holder.timeText.text = calenderManager.formatTime(dataList[position].hour, dataList[position].minute)
-
         }
+
+        if (selectedPosition == position) {
+            holder.itemView.findViewById<TextView>(R.id.day_text).setBackgroundResource(R.drawable.select_date_view)
+            holder.itemView.findViewById<TextView>(R.id.day_text).setTextColor(Color.WHITE)
+        } else {
+            holder.itemView.findViewById<TextView>(R.id.day_text).setBackgroundResource(0)
+            holder.itemView.findViewById<TextView>(R.id.day_text).setTextColor(Color.BLACK)
+        }
+
 
     }
 
