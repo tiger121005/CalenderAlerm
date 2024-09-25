@@ -1,6 +1,7 @@
 package app.ito.yomi.calenderalerm
 
 import android.app.DatePickerDialog
+import android.app.DatePickerDialog.OnDateSetListener
 import android.app.Dialog
 import android.app.TimePickerDialog
 import android.content.Context
@@ -16,6 +17,8 @@ import android.widget.Button
 import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.TimePicker
+import androidx.compose.material3.TimePickerColors
+import androidx.compose.ui.graphics.Color
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.threeten.bp.LocalDate
@@ -44,7 +47,7 @@ class BottomSheet(): BottomSheetDialogFragment() {
     private lateinit var deleteButton: Button
     private lateinit var changeButton: Button
 
-    private val actions = Actions()
+    private val calenderManager = CalenderManager()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -146,6 +149,7 @@ class BottomSheet(): BottomSheetDialogFragment() {
         }
         dateEditText.setText(date)
         dateEditText.setOnClickListener {
+
             val datePicker = DatePickerFragment(dateEditText, year, month, day)
             val fragmentManager = requireActivity().supportFragmentManager
             datePicker.show(fragmentManager, "datePickerDialog")
@@ -156,7 +160,7 @@ class BottomSheet(): BottomSheetDialogFragment() {
         timeEditText.setRawInputType(InputType.TYPE_NULL)
         var time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"))
         if (hour != 100) {
-            time = actions.formatTime(hour, minute)
+            time = calenderManager.formatTime(hour, minute)
         }
         timeEditText.setText(time)
         timeEditText.setOnClickListener {
@@ -169,6 +173,7 @@ class BottomSheet(): BottomSheetDialogFragment() {
 
 class DatePickerFragment(private val editText: EditText, private val year: Int, private val month: Int, private val date: Int): DialogFragment(), DatePickerDialog.OnDateSetListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+
         var calendar: Calendar = Calendar.getInstance()
         var year = calendar.get(Calendar.YEAR)
         var month = calendar.get(Calendar.MONTH)
@@ -193,11 +198,12 @@ class DatePickerFragment(private val editText: EditText, private val year: Int, 
 
 class TimePickerFragment(private val editText: EditText, private val hour: Int, private val minute: Int): DialogFragment(), TimePickerDialog.OnTimeSetListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+
         val calendar: Calendar = Calendar.getInstance()
         var hour = calendar.get(Calendar.HOUR_OF_DAY)
         var minute = calendar.get(Calendar.MINUTE)
 
-        if (hour != 100) {
+        if (this.hour != 100) {
             hour = this.hour
             minute = this.minute
         }

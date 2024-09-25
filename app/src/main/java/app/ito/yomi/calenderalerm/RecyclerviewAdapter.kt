@@ -9,7 +9,7 @@ import app.ito.yomi.calenderalerm.Actions
 class RecyclerviewAdapter(dataList: List<AlarmData>): RecyclerView.Adapter<ViewHolderItem>() {
     private lateinit var listener: OnDataCellClickListener
     private var dataList = dataList
-    private val actions = Actions()
+    private val calenderManager = CalenderManager()
 
     interface OnDataCellClickListener {
         fun onItemClick(data: AlarmData)
@@ -36,7 +36,7 @@ class RecyclerviewAdapter(dataList: List<AlarmData>): RecyclerView.Adapter<ViewH
         }else if (dataList[position].hour == 100) {
             holder.timeText.text = ""
         } else {
-            holder.timeText.text = actions.formatTime(dataList[position].hour, dataList[position].minute)
+            holder.timeText.text = calenderManager.formatTime(dataList[position].hour, dataList[position].minute)
 
         }
 

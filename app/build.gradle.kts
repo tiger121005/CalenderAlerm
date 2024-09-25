@@ -44,6 +44,7 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.jakewharton.thretenabp)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.material3.android)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.lifecycle.viewmodel)
 
