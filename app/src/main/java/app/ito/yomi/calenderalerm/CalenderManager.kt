@@ -4,18 +4,17 @@ import android.util.Log
 import org.threeten.bp.LocalDate
 import org.threeten.bp.YearMonth
 import org.threeten.bp.format.DateTimeFormatter
-import java.util.Date
 
 class CalenderManager {
 
-    fun daysInMonthArray(date: LocalDate?, selectedDate: LocalDate):ArrayList<Long> {
+    fun daysInMonthArray(date: LocalDate):ArrayList<Long> {
         val daysInMonthArray = ArrayList<Long>()
         // 年と月を取得
         val yearMonth = YearMonth.from(date)
         // 月の日数を取得
         val daysInMonth = yearMonth.lengthOfMonth()
         // 月初めの日付を取得
-        val firstOfMonth = selectedDate.withDayOfMonth(1)
+        val firstOfMonth = date.withDayOfMonth(1)
         // 月初めの曜日を取得
         val dayOfWeek = firstOfMonth.dayOfWeek.value
 
@@ -54,9 +53,9 @@ class CalenderManager {
         for (i in 0..dates.size - 1) {
 
             var id: Int = -1
-            var title: String = ""
-            var hour: Int = 100
-            var minute: Int = 100
+            var title = ""
+            var hour = 100
+            var minute = 100
             val data = filteredAlarmData(selectedDate.year, selectedDate.monthValue, dates[i].toInt(), alarmData)
             if (data.size != 0) {
                 id = data[0].id
@@ -95,5 +94,11 @@ class CalenderManager {
         val hourStr = if (hour < 10) "0$hour" else hour.toString()
         val minuteStr = if (minute < 10) "0$minute" else minute.toString()
         return "$hourStr:$minuteStr"
+    }
+
+    fun formatDate(year: Int, month: Int, date: Int): String {
+        val monthStr = if (month < 10) "0$month" else month.toString()
+        val dateStr = if (date < 10) "0$date" else date.toString()
+        return "$year/$monthStr/$dateStr"
     }
 }
