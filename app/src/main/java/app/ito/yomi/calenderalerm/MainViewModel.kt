@@ -13,17 +13,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         dao = AlarmDatabase.getDatabase(application).alarmDataDao()
     }
 
-    // 現在表示するアラームのLiveData
-//    private val _alarmData = MutableLiveData<LiveData<AlarmData>>()
-//    val alarmData: LiveData<AlarmData> = _alarmData.switchMap { alarm ->
-//        alarm
-//    }
-
-    // idを基にアラームを取得し、LiveDataを更新する
-//    fun getAlarm(year: Int, month: Int, date: Int) {
-//        _alarmData.value = dao.getAlarmByDate(year, month, date)
-//    }
-
     // DBに保管された内容を表示
     val alarmAllData = dao.getAll()
 
@@ -52,12 +41,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             dao.update(updateData)
         }
     }
-
-//    fun update(alarm: AlarmData) {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            dao.update(alarm)
-//        }
-//    }
 
     fun delete(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {

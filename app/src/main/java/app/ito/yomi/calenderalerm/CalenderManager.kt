@@ -84,7 +84,6 @@ class CalenderManager {
     }
 
     private fun filteredAlarmData(year: Int, month: Int, date: Int, alarmData: MutableList<AlarmData>): List<AlarmData> {
-        Log.d("alarmData", alarmData.toString())
         val data = alarmData.filter { it.year == year && it.month == month && it.date == date }
 
         return data

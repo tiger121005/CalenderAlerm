@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity(), NoticeBottomSheetListener {
     private var currentSelect: AlarmData? = null
 
     private val calenderManager = CalenderManager()
+    private val timerManager = TimerManager()
 
     private var alarmData: MutableList<AlarmData> = mutableListOf()
 
@@ -104,7 +105,8 @@ class MainActivity : AppCompatActivity(), NoticeBottomSheetListener {
             minute = data.minute
         )
         addData(addData)
-        setAlarm(addData)
+        val settingAlarmManager = SettingAlarmManager()
+        timerManager.setAlarm(this, addData)
     }
 
     private fun setupButton() {
@@ -139,11 +141,7 @@ class MainActivity : AppCompatActivity(), NoticeBottomSheetListener {
         }
     }
 
-    private fun setAlarm(data: AlarmData) {
-        val timeDiff = calculateTimeDifference(data.year, data.month, data.date, data.hour, data.minute)
-        val settingAlarmManager = SettingAlarmManager()
-        settingAlarmManager.settingAlarmManager(this, timeDiff, data.id)
-    }
+
 
     private fun setupAddButton() {
         binding.addButton.backgroundTintList = null
@@ -224,11 +222,5 @@ class MainActivity : AppCompatActivity(), NoticeBottomSheetListener {
             showDate = showDate.minusMonths(1)
         }
         setMonthView()
-    }
-
-    private fun calculateTimeDifference(year: Int, month: Int, day: Int, hour: Int, minute: Int): Long {
-        val alarmTime = LocalDateTime.of(year, month, day, hour, minute)
-        val currentTime = LocalDateTime.now()
-        return Duration.between(currentTime, alarmTime).toMillis()
     }
 }
