@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "app.ito.yomi.calenderalerm"
-        minSdk = 24
+        minSdk = 31
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"

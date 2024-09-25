@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.ito.yomi.calenderalerm.databinding.ActivityMainBinding
 import com.jakewharton.threetenabp.AndroidThreeTen
+import org.threeten.bp.Duration
 import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
 import org.threeten.bp.YearMonth
 import org.threeten.bp.format.DateTimeFormatter
 
@@ -85,7 +87,6 @@ class MainActivity : AppCompatActivity(), NoticeBottomSheetListener {
             }
 
         }
-
     }
 
     override fun onDeleteButtonClick(id: Int) {
@@ -121,6 +122,10 @@ class MainActivity : AppCompatActivity(), NoticeBottomSheetListener {
             Log.d("before insert data current null", data.toString())
             viewModel.insert(data)
         }
+
+        val timeDiff = calculateTimeDifference(data.year, data.month, data.date, data.hour, data.minute)
+        val settingAlarmManager = SettingAlarmManager()
+        settingAlarmManager.settingAlarmManager(this, timeDiff, data.id)
     }
 
     private fun setupButton() {
@@ -270,4 +275,10 @@ class MainActivity : AppCompatActivity(), NoticeBottomSheetListener {
         return data
     }
 
+}
+
+private fun calculateTimeDifference(year: Int, month: Int, day: Int, hour: Int, minute: Int): Long {
+    val alarmTime = LocalDateTime.of(year, month, day, hour, minute)
+    val currentTime = LocalDateTime.now()
+    return Duration.between(currentTime, alarmTime).toMillis()
 }
