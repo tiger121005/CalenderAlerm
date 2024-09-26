@@ -23,7 +23,7 @@ class SettingAlarmManager : Application() {
 
         val intentResolve = intent.resolveActivity(context.packageManager)
         if (intentResolve != null) {
-            startActivity(intent)
+            context.startActivity(intent)
         } else {
             Log.d("intentResolve", "null")
             Toast.makeText(context, "アラームを設定できるアプリが見つかりません", Toast.LENGTH_LONG).show()
